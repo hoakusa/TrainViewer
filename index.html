@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-min.css">
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+  <link rel="stylesheet" href="./css/main.css">
 
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
@@ -52,31 +53,154 @@
 
     class Train extends React.Component {
       render() {
+        var train = this.props.train;
+
+        {/* If train details is available */}
+
+        if (train.detail) {
+          var wagon_list = [];
+          train.detail.wagons.map((wagon) => {
+            wagon_list.push(wagon.wagonType);
+          });
+        }
+        
+
         return (
           <li>
             <div className="departure">
               <div className="title">Departure</div>
-              <div className="name">TKU</div>
-              <div className="time">TKU</div>
+              <div className="name">{train.departure.station}</div>
+              <div className="time">{train.departure.time}</div>
             </div>
+
+            <div className="train">
+              <div className="name">{train.trainName}</div>
+            </div>
+
+            <div className="arrival">
+              <div className="title">Arrival</div>
+              <div className="name">{train.arrival.station}</div>
+              <div className="time">{train.arrival.time}</div>
+            </div>
+
+            { train.detail ? (
+                <div className="description">
+                  <dl>
+                    <dt>Locomotive</dt>
+                    <dd>{train.detail.locomotiveType + ' ' + train.detail.powerType}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Wagons</dt>
+                    <dd>{wagon_list.join(', ')} ({train.detail.totalLength} meters)</dd>
+                  </dl>
+                  <dl>
+                    <dt>Max speed</dt>
+                    <dd>{train.detail.maximumSpeed}KM/h</dd>
+                  </dl>
+                </div>
+                
+              ) : (
+                <div className="description">
+                  <h4>Data is not available.</h4>
+                </div>
+              )
+            }
+            
+
           </li>
         );
       }
     }
 
     class TrainList extends React.Component {
-      render() {
-        var trainlist = this.props.trains.map(function(train) {
-          return (
-            <Train train={train} key={train.trainNumber}/>
-          );
-        }.bind(this));
+      constructor() {
+        super();
+        this.state = {
+          trains: []
+        };
+      }
 
-        return (
-          <ul>
-            {trainlist}
-          </ul>
-        );
+      getComposition(props = this.props) {
+        props.trains.map((train, i) => {
+          var url = 'https://rata.digitraffic.fi/api/v1/compositions/' + train.trainNumber;
+      
+          $.ajax({
+            url: url,
+            data: {departure_date: train.departureDate},
+            type: 'get',
+            success: function(data) {
+              var arr = this.state.trains;
+
+              if (data.trainNumber) {
+                {/* Can fetch train details */}
+                arr.push({
+                  trainName: data.trainType + data.trainNumber,
+                  departure: {
+                    station: data.journeySections[0].beginTimeTableRow.stationShortCode,
+                    time: moment(data.journeySections[0].beginTimeTableRow.scheduledTime).format('hh:mm')                  
+                  },
+                  arrival: {
+                    station: data.journeySections[0].endTimeTableRow.stationShortCode,
+                    time: moment(data.journeySections[0].endTimeTableRow.scheduledTime).format('hh:mm')                
+                  },
+                  detail: {
+                    locomotiveType: data.journeySections[0].locomotives[0].locomotiveType,
+                    powerType: data.journeySections[0].locomotives[0].powerType,
+                    wagons: data.journeySections[0].wagons,
+                    totalLength: data.journeySections[0].totalLength,
+                    maximumSpeed: data.journeySections[0].maximumSpeed
+                  }
+
+                });                
+
+              } else {
+                {/* Cannot fetch train details -> get details in TrainList */}
+
+                arr.push({
+                  trainName: props.trains[i].trainType + props.trains[i].trainNumber,
+                  departure: {
+                    station: props.trains[i].timeTableRows[0].stationShortCode,
+                    time: moment(props.trains[i].timeTableRows[0].scheduledTime).format('hh:mm')              
+                  },
+                  arrival: {
+                    station: props.trains[i].timeTableRows[props.trains[i].timeTableRows.length-1].stationShortCode,
+                    time: moment(props.trains[i].timeTableRows[props.trains[i].timeTableRows.length-1].scheduledTime).format('hh:mm')                
+                  }
+                })
+              }
+              
+              if (arr.length === props.trains.length) {
+                this.setState({
+                  trains: arr
+                });
+              }
+              
+            }.bind(this),
+            error: function(e) {              
+              return null;
+            }
+          });
+        }, this);       
+      }
+
+      componentWillReceiveProps(nextProps) {
+        this.getComposition(nextProps);
+      }
+
+      render() {
+
+        if (this.state.trains.length) {
+
+          const trainlist = this.state.trains;
+
+          return (
+            <ul>
+              {trainlist.map((train) => <Train train={train} key={train.trainNumber} />)}
+            </ul>
+          );
+
+        } else return null;
+        
       }
     }
 
@@ -87,7 +211,7 @@
           trains: [],
           date: ''
         };
-      }
+      }      
 
       getData() {
         $.ajax({
@@ -111,14 +235,16 @@
         this.getData();
       }
 
-      render() {
+      render() {        
         var date = moment(this.state.date).format('LL');
-        return (
-          <div>
-            <h1>{date}</h1>
-            <TrainList trains={this.state.trains}/>
-          </div>
-        );
+        if (this.state.trains) {
+          return (
+            <div>
+              <h1>{date}</h1>
+              <TrainList trains={this.state.trains}/>
+            </div>
+          );
+        } else return null;      
       }
     }
 
