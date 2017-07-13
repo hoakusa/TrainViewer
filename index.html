@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Train viewer composition</title>
+
+  <!-- Pure-grid -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-min.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:700,800|Catamaran:200,300,500">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/evil-icons/1.9.0/evil-icons.min.css">
+
+  <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script type="text/javascript" src="./js/mousewheel.js"></script>
+
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script type="text/babel">
+    
+    class Header extends React.Component {
+      render() {
+        return (
+          <div>
+            This is header
+          </div>
+        );
+      }
+    }
+
+    class Footer extends React.Component {
+      render() {
+        return (
+          <div>
+            This is footer
+          </div>
+        );
+      }
+    }
+
+    class Train extends React.Component {
+      render() {
+        return (
+          <li>
+            <div className="departure">
+              <div className="title">Departure</div>
+              <div className="name">TKU</div>
+              <div className="time">TKU</div>
+            </div>
+          </li>
+        );
+      }
+    }
+
+    class TrainList extends React.Component {
+      render() {
+        var trainlist = this.props.trains.map(function(train) {
+          return (
+            <Train train={train} key={train.trainNumber}/>
+          );
+        }.bind(this));
+
+        return (
+          <ul>
+            {trainlist}
+          </ul>
+        );
+      }
+    }
+
+    class Body extends React.Component {
+      constructor() {
+        super();
+        this.state = {
+          trains: [],
+          date: ''
+        };
+      }
+
+      getData() {
+        $.ajax({
+          url: 'https://rata.digitraffic.fi/api/v1/live-trains',
+          data: {station: 'SLO'},
+          type: 'get',
+          success: function(data) {
+            var trains = data;
+            this.setState({
+              trains: trains,
+              date: trains[0].departureDate
+            });
+          }.bind(this),
+          error: function(e) {
+            console.log(e);
+          }
+        });
+      }
+
+      componentDidMount() {
+        this.getData();
+      }
+
+      render() {
+        var date = moment(this.state.date).format('LL');
+        return (
+          <div>
+            <h1>{date}</h1>
+            <TrainList trains={this.state.trains}/>
+          </div>
+        );
+      }
+    }
+
+    class Application extends React.Component {
+      render() {
+        return (
+          <div>
+            <Header />
+            <Body />
+            <Footer />
+          </div>
+        );
+      }
+    }
+
+    // Render to HTML
+    ReactDOM.render(
+      <Application />,
+      document.getElementById('app')
+    );
+
+  </script>
+
+</body>
+
+</html>
