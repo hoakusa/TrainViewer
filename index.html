@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Train viewer composition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Pure-grid -->
   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
@@ -14,8 +15,7 @@
 
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:700,800|Catamaran:200,300,500">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/evil-icons/1.9.0/evil-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <script src="https://unpkg.com/react@latest/dist/react.js"></script>
   <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
@@ -28,15 +28,94 @@
 
 <body>
   <div id="app"></div>
+  <div id="overlayer" class="overlayer animated fadeOut"></div>
+
+  <script type="text/javascript">
+    // Disabled overlayer
+    setTimeout(function() {
+      $("#overlayer").css("visibility", "hidden");
+    }, 2000);
+  </script>
 
   <script type="text/babel">
     
     class Header extends React.Component {
+      constructor() {
+        super();
+        this.state = {
+          openMenu: false
+        };
+      }
+
+      changeMenu() {
+        this.setState({
+          openMenu: !this.state.openMenu
+        });
+      }
+
       render() {
         return (
-          <div>
-            This is header
-          </div>
+          <header>
+            <div className={
+                  this.state.openMenu ? 'menu-open' : 'menu-close'
+                } 
+                id="navigation" 
+                onClick={this.changeMenu.bind(this)}>
+                
+              <div className="menu-t"></div>
+              <div className="menu-m"></div>
+              <div className="menu-b"></div>
+            </div>
+
+            <div className={
+                  this.state.openMenu ? 'tabmenu-open animated fadeInUp' : 'tabmenu-close animated fadeOutDown'
+                }
+                id="tabmenu"
+                >
+              <ul className={
+                  this.state.openMenu ? 'animated fadeInUp' : 'animated fadeOutDown'
+                }>
+                <li className="active" onClick={this.changeMenu.bind(this)}>Tracking</li>
+                <li onClick={this.changeMenu.bind(this)}>News</li>
+                <li onClick={this.changeMenu.bind(this)}>About</li>
+                <li onClick={this.changeMenu.bind(this)}>Contact</li>
+                <li onClick={this.changeMenu.bind(this)}>Login</li>
+              </ul>
+              <div className={
+                  this.state.openMenu ? 'social-button animated fadeInUp' : 'social-button animated fadeOutDown'
+                }>
+                <div className="fa fa-facebook" onClick={this.changeMenu.bind(this)}></div>
+                <div className="fa fa-twitter" onClick={this.changeMenu.bind(this)}></div>
+                <div className="fa fa-instagram" onClick={this.changeMenu.bind(this)}></div>
+              </div>
+
+            </div>
+
+            <div className="top-bar">
+              <div className="container">
+                <div className="fa fa-facebook"></div>
+                <div className="fa fa-twitter"></div>
+                <div className="fa fa-instagram"></div>
+                <div className="login">Login</div>
+                <div className="register">Register</div>
+              </div>
+            </div>
+
+            <div className="container banner">
+              <div className="logo">
+                train tracking
+              </div>
+              <div className="menu">
+                <ul>
+                  <li className="active">Tracking</li>
+                  <li>News</li>
+                  <li>About</li>
+                  <li>Contact</li>
+                </ul>
+              </div>
+            </div>
+
+          </header>
         );
       }
     }
@@ -44,9 +123,9 @@
     class Footer extends React.Component {
       render() {
         return (
-          <div>
-            This is footer
-          </div>
+          <footer>
+            Copyright@traintracking 2017. All right reserved.
+          </footer>
         );
       }
     }
@@ -63,18 +142,31 @@
             wagon_list.push(wagon.wagonType);
           });
         }
-        
 
         return (
-          <li>
+          <li className="train-item">
+
+            { train.runningCurrently ? (
+              <div className="tagOn">
+                On Running
+              </div>
+            ) : (
+              <div className="tagOff">
+                Off
+              </div>
+            )}
+
             <div className="departure">
               <div className="title">Departure</div>
               <div className="name">{train.departure.station}</div>
               <div className="time">{train.departure.time}</div>
             </div>
 
-            <div className="train">
-              <div className="name">{train.trainName}</div>
+            <div className="train-name">
+              <div>{train.trainName}</div>
+              <div className="train-icon">
+                <img src="./img/train.svg" />
+              </div>
             </div>
 
             <div className="arrival">
@@ -84,24 +176,41 @@
             </div>
 
             { train.detail ? (
-                <div className="description">
-                  <dl>
-                    <dt>Locomotive</dt>
-                    <dd>{train.detail.locomotiveType + ' ' + train.detail.powerType}</dd>
-                  </dl>
-                  <dl>
-                    <dt>Wagons</dt>
-                    <dd>{wagon_list.join(', ')} ({train.detail.totalLength} meters)</dd>
-                  </dl>
-                  <dl>
-                    <dt>Max speed</dt>
-                    <dd>{train.detail.maximumSpeed}KM/h</dd>
-                  </dl>
+                <div className="submenu pure-g">
+                  <div className="pure-u-1-2 train-img"><img src="./img/vr1.jpg" /></div>
+
+                  <div className="pure-u-1-2 description">
+                    <dl>
+                      <dt>Locomotive</dt>
+                      <dd>{train.detail.locomotiveType + ' ' + train.detail.powerType}</dd>
+                    </dl>
+                    <dl>
+                      <dt>Wagons</dt>
+                      <dd>{wagon_list.join(', ')} ({train.detail.totalLength} meters)</dd>
+                    </dl>
+                    <dl>
+                      <dt>Max speed</dt>
+                      <dd>{train.detail.maximumSpeed}KM/h</dd>
+                    </dl>
+
+                    <div className="tag-name">
+                      <span>{train.trainName}</span>
+                    </div>
+
+                  </div>                  
                 </div>
-                
               ) : (
-                <div className="description">
-                  <h4>Data is not available.</h4>
+                <div className="submenu pure-g">
+                  <div className="pure-u-1-2 train-img"><img src="./img/vr1.jpg" /></div>
+
+                  <div className="pure-u-1-2 description">
+                    <h4>Data is not available.</h4>
+
+                    <div className="tag-name">
+                      <span>{train.trainName}</span>
+                    </div>
+
+                  </div>
                 </div>
               )
             }
@@ -135,6 +244,7 @@
                 {/* Can fetch train details */}
                 arr.push({
                   trainName: data.trainType + data.trainNumber,
+                  runningCurrently: props.trains[i].runningCurrently,
                   departure: {
                     station: data.journeySections[0].beginTimeTableRow.stationShortCode,
                     time: moment(data.journeySections[0].beginTimeTableRow.scheduledTime).format('hh:mm')                  
@@ -158,6 +268,7 @@
 
                 arr.push({
                   trainName: props.trains[i].trainType + props.trains[i].trainNumber,
+                  runningCurrently: props.trains[i].runningCurrently,
                   departure: {
                     station: props.trains[i].timeTableRows[0].stationShortCode,
                     time: moment(props.trains[i].timeTableRows[0].scheduledTime).format('hh:mm')              
@@ -194,8 +305,8 @@
           const trainlist = this.state.trains;
 
           return (
-            <ul>
-              {trainlist.map((train) => <Train train={train} key={train.trainNumber} />)}
+            <ul className="list-train">
+              {trainlist.map((train, i) => <Train train={train} key={i} />)}
             </ul>
           );
 
@@ -239,8 +350,8 @@
         var date = moment(this.state.date).format('LL');
         if (this.state.trains) {
           return (
-            <div>
-              <h1>{date}</h1>
+            <div className="container">
+              <h2 className="departure-date">{date}</h2>
               <TrainList trains={this.state.trains}/>
             </div>
           );

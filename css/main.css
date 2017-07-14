@@ -1,3 +1,511 @@
+/*
+ * GLOBAL
+*/
+
+@import url('https://fonts.googleapis.com/css?family=Exo:100,200,300|Open+Sans:200,300,400|Open+Sans+Condensed:300|Orbitron');
+
+html {
+    font-size: 100%;
+}
+
 body {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    background-color: #303841;
+    color: #ecf0f1;
+}
+
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    font-family: "Open Sans", sans-serif;
+}
+
+ul, li {
+    padding: 0;
+    list-style: none;
+}
+
+a, a:hover, a:active, a:focus {
+    text-decoration: none;
+}
+
+.container {
+    width: 1170px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Menu */
+
+#navigation {
+    position: fixed;
+    visibility: hidden;
+    z-index: 99;
+    color: #EEEEEE;
+    width: 24px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.menu-close {
+    top: 16px;
+    right: 12px;
+    padding: 24px 20px;
+    background-color: rgba(238, 238, 238, 0.2);
+    border-radius: 50%;
+    -webkit-transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+          transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.menu-open {
+    top: 0;
+    right: 0;
+    padding: 40px 32px calc(100vh - 48px) calc(100vw - 40px);
+    background-color: rgba(238, 238, 238, 0.9);
+    border-radius: 0;
+    -webkit-transition: all .3s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+          transition: all .3s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+}
+
+.menu-close .menu-t,
+.menu-close .menu-m,
+.menu-close .menu-b {
+    height: 2px;
+    width: 24px;
+    background-color: #ecf0f1;
+}
+
+.menu-close .menu-t,
+.menu-close .menu-m {
+    margin-bottom: 5px;
+}
+
+.menu-open .menu-t,
+.menu-open .menu-m,
+.menu-open .menu-b {
+    height: 2px;
+    width: 24px;
+    background-color: #3A4750;
+}
+
+.menu-open .menu-t,
+.menu-open .menu-m {
+    margin-bottom: 5px;
+}
+
+#tabmenu {
+    position: fixed;
+    visibility: hidden;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 48px);
+    color: #3A4750;
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 30px;
+}
+
+#tabmenu li {
+    font-size: 1.875rem;
+    padding: 12px 0;
+    height: calc((100vh - 100px - 64px) / 5 - 24px);
+    cursor: pointer;
+}
+
+#tabmenu .social-button {
+    margin-top: 24px;
+}
+
+#tabmenu .social-button .fa {
+    font-size: 2rem;
+    padding: 4px 12px;
+    display: inline-block;
+}
+
+#tabmenu li.active,
+#tabmenu li:active,
+#tabmenu li:focus {
+    text-decoration:line-through;
+}
+
+.tabmenu-open {
+    opacity: 1;
+    -webkit-transition: all .3s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+          transition: all .3s cubic-bezier(0.95, 0.05, 0.795, 0.035);
+}
+
+.tabmenu-close {
+    opacity: 0;
+    -webkit-transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+          transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.top-bar {
+    background-color: #EA9215;
+    color: #3A4750;
+    height: 32px;
+    padding: 0;
+}
+
+.top-bar .container {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
     
+    -webkit-flex-flow: row wrap;
+    justify-content: flex-end;
+}
+
+.top-bar .container div {
+    display: block;
+    padding: 6px 0 7px 0;
+    cursor: pointer;
+    background-color: #EA9215;
+    color: #3A4750;
+    border-left: solid 1px #505e6d;
+    text-align: center;
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+
+.top-bar .container div:hover,
+.top-bar .container div:active {
+    background-color: #303841;
+    color: #EA9215;
+}
+
+.login, .register {
+    width: 90px;
+    font-size: 0.875rem;
+}
+
+.register {
+    border-right: solid 1px #505e6d;
+}
+
+.top-bar .container div.fa {
+    width: 44px;
+    padding: 8px 0 5px 0;
+}
+
+.banner {
+    padding: 44px 0 28px 0;
+}
+
+.banner .logo {
+    display: inline-block;
+    font-family: "Orbitron", sans-serif;
+    font-size: 2.25rem;    
+}
+
+.banner .menu {
+    float: right;
+    display: inline-block;
+}
+
+.banner .menu ul {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    
+    -webkit-flex-flow: row wrap;
+    justify-content: flex-end;
+    margin: 0;
+}
+
+.banner .menu li {
+    margin-left: 40px;
+    padding: 8px 4px;
+    color: #66778a;
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+    cursor: pointer;
+}
+
+.banner .menu li:hover {
+    color: #EEEEEE;
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+
+.banner .menu li:active,
+.banner .menu li.active {
+    border-bottom: solid 2px #EA9215;
+    color: #EEEEEE;
+    -webkit-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+
+h2.departure-date {
+    font-weight: 300;
+}
+
+/* Train */
+
+.list-train {
+    margin-top: 30px;
+}
+
+.train-item {
+    position: relative;
+    padding: 40px 0 50px 0;
+}
+
+.tagOn, .tagOff {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    padding: 6px 0;
+    -webkit-clip-path: polygon(0 0, 100% 0, 92% 100%, 0% 100%);
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0% 100%);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.tagOn {
+    background-color: #EA9215;
+    color: #3A4750;
+}
+
+.tagOff {
+    background-color: #66778a;
+    color: #EEEEEE;
+}
+
+.departure,
+.train-name,
+.arrival {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
+}
+
+.train-name {
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    width: 140px;  
+}
+
+.train-name .train-icon {
+    margin: 0 auto;
+    width: 52px;
+    height: auto;
+    opacity: 0.4;
+}
+
+.train-name .train-icon img {
+    width: 100%;
+}
+
+.departure .title,
+.arrival .title {
+    font-size: 0.875rem;
+    color: #66778a;
+}
+
+.departure .name,
+.arrival .name {
+    font-family: "Exo", sans-serif;
+    font-size: 3.5rem;
+    font-weight: 200;
+}
+
+.departure .time,
+.arrival .time {
+    font-size: 1.5rem;
+    font-weight: 200;
+    letter-spacing: 2px;
+}
+
+.train-item .submenu {
+    position: relative;
+    margin-top: 30px;
+    min-height: 200px;
+    width: 100%;
+    background-color: #ecf0f1;
+    color: #66778a;
+    overflow: hidden;
+}
+
+.train-item .submenu .train-img {
+    height: 300px;
+    overflow: hidden;
+}
+
+.train-item .submenu .train-img img {
+    width: auto;
+    height: 100%;
+    -webkit-filter: grayscale(80%);
+    filter: grayscale(80%);
+}
+
+.train-item .submenu .description {
+    position: relative;
+    margin: 0;
+    padding-top: 40px;
+}
+
+.train-item .submenu .tag-name {
+    position: absolute;
+    bottom: 30px;
+    left: -140px;
+    width: 200px;
+    padding: 16px 0;
+    text-align: center;
+    background-color: #EA9215;
+    color: #EEEEEE;
+    letter-spacing: 4px;
+    font-size: 1.25em;
+}
+
+.train-item .submenu h4 {
+    padding-left: 40px;
+    font-weight: 400;
+}
+
+dl dt, dl dd {
+    display: inline-block;
+}
+
+.train-item .submenu dt {
+    padding-left: 40px;
+    width: 100px;
+    font-weight: 400;
+}
+
+.train-item .submenu dd {
+    font-weight: 300;
+}
+
+footer {
+    padding: 16px 0;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #66778a;
+}
+
+/*
+ * RESPONSIVE
+*/
+
+@media screen and (max-width: 1199px) {
+    .container {
+        width: 970px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .container {
+        width: 750px;
+    }    
+}
+
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 0.875rem;
+    }
+
+    .container {
+        width: auto;
+        padding-left: 8px;
+        padding-right: 8px;  
+    }
+
+    #navigation, #tabmenu {
+        visibility: visible;
+    }
+
+    .top-bar {
+        display: none;
+    }
+
+    .banner {
+        padding-top: 30px;
+        padding-bottom: 14px;
+    }
+
+    .banner .logo {
+        font-size: 1.75rem;
+    }
+
+    .banner .menu {
+        visibility: hidden;
+    }
+
+    h2.departure-date,
+    .departure .time, .arrival .time {
+        font-size: 1.25rem;
+    }
+
+    .departure .name, .arrival .name {
+        font-size: 2.5rem;
+    }
+
+    .departure,
+    .train-name,
+    .arrival {
+        width: 33.33%;
+    }
+
+    .train-name {
+        font-size: 1rem;
+    }
+
+}
+
+@media screen and (max-width: 575px) {
+    .train-item .submenu .train-img,
+    .train-item .submenu .description {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 16px);
+    }
+
+    .train-item .submenu .description {
+        padding-top: 16px;
+        background-color: rgba(255, 255, 255, 0.7)
+    }
+
+    .train-item .submenu .tag-name {
+        bottom: 0;
+        left: 0;
+    }
+
+    .train-item .submenu dt {
+        padding-left: 24px;
+        width: auto;
+    }
+
+    .train-item .submenu dd {
+        margin-left: 24px;
+    }
+}
+
+/*
+ * ANIMATION
+*/
+
+.overlayer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #303841;
+    z-index: 1000;
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
 }
